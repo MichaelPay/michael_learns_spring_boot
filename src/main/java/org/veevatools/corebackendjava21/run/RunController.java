@@ -1,11 +1,8 @@
 package org.veevatools.corebackendjava21.run;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,14 +35,29 @@ public class RunController {
         if (run.isPresent()) {
             return run.get();
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Run not found");
+            throw new RunNotFoundException(id);
         }
     }
 
     // post
+    @PostMapping("/runs")
+    @ResponseStatus(HttpStatus.CREATED)
+    void create(@Valid @RequestBody Run run) {
+        runRepository.create(run);
+    }
 
     // put
+    @PutMapping("/runs/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void update(@PathVariable Integer id, @Valid @RequestBody Run run) {
+        runRepository.update(run, id);
+    }
 
     // delete
+    @DeleteMapping("/runs/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void delete(@PathVariable Integer id) {
+        runRepository.delete(id);
+    }
 
 }
